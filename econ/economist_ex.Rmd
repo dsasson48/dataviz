@@ -1,0 +1,40 @@
+---
+title: "economist"
+author: "David Sasson"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+setwd("~/Desktop/MIT/dataviz/econ") # change to your own directory
+library(tidyverse)
+```
+
+We're going to create [this graphic](https://www.economist.com/graphic-detail/2011/12/02/corrosive-corruption), with only a few lines of code. 
+
+![alt](http://tutorials-live.iq.harvard.edu:8000/user/VEAvyv9hyOLR/notebooks/workshops/R/Rgraphics/images/Economist1.png)
+
+
+```{r}
+dat <- read.csv("EconomistData.csv")
+
+pc1 <- ggplot(dat, aes(x = CPI, y = HDI, color = Region))
+pc1 + geom_point()
+```
+
+
+To complete this graph we need to:
+
+* add a trend line
+* change the point shape to open circle
+* change the order and labels of Region
+* label select points
+* fix up the tick marks and labels
+* move color legend to the top
+* title, label axes, remove legend title
+* theme the graph with no vertical guides
+* add model R2 (hard)
+* add sources note (hard)
+* final touches to make it perfect (use image editor for this)
+
+
