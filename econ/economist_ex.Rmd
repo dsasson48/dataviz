@@ -6,13 +6,12 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
-setwd("~/Desktop/MIT/dataviz/econ") # change to your own directory
 library(tidyverse)
 ```
 
 We're going to create [this graphic](https://www.economist.com/graphic-detail/2011/12/02/corrosive-corruption), with only a few lines of code. 
 
-![alt](http://tutorials-live.iq.harvard.edu:8000/user/VEAvyv9hyOLR/notebooks/workshops/R/Rgraphics/images/Economist1.png)
+![](http://tutorials-live.iq.harvard.edu:8000/user/VEAvyv9hyOLR/notebooks/workshops/R/Rgraphics/images/Economist1.png)
 
 
 ```{r}
