@@ -1,3 +1,5 @@
+## [HST 953 Collaborative Data Science in Medicine](https://criticaldata.mit.edu/course/)
+
 ## [NUS-NUH-MIT DATATHON](http://www.nus-datathon.com/)
 
 ## [UP-MIT-Stanford Big Data for Health](http://healthdatacon.aehin.net/)
