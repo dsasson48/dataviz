@@ -59,21 +59,38 @@ str(admins)
 x <- ggplot(admins)
 
 x + geom_bar(aes(religion)) + coord_flip() + theme_minimal()
+```
 
+
+```{r}
 x + geom_bar(aes(insurance)) + facet_wrap(~ admission_type) + theme_fivethirtyeight()
+```
 
+```{r}
 x + geom_bar(aes(ethnicity)) + coord_flip() + theme_tufte()
+```
 
+```{r}
 x + geom_count(aes(x = insurance, y = ethnicity), alpha=0.3, col="red") + 
   scale_size_area() +
   theme_classic() 
+```
 
+```{r}
 demo.los <- as.numeric(admins$dischtime - admins$admittime)
 
 ggplot() + 
   geom_histogram(aes(demo.los), alpha=0.6, fill=4, bins = 30) + 
   ggtitle("Length of Stay in ICU") 
+```
 
+```{r}
+x + geom_bar(aes(discharge_location)) + coord_flip() + ggtitle("Discharge Location")
+```
+
+
+
+```{r}
 # keep only numeric columns 
 nums <- admins %>% keep(is.numeric)
 
@@ -83,20 +100,6 @@ pairs(nums, pch =19, lower.panel=panel.smooth, cex = 0.1, upper.panel = NULL)
 
 ```
 
-Full disclosure--I put together this presentaion on my flight over here yesterday :) below is some scratch that didn't make it into the pretty graphs above. I'm including it to show you what my thought process is and what real data exploration looks like. It sure as hell ain't coherent, but you'll always end up with an interesting answer if you keep digging through the data. _Bonus points_ to whoever makes cool vizzes with these *Bonus points mean nothing, but I will really like you as a person* 
-
-```{r}
-# look at time difference. why is this straight line? Maybe look at boxplot of diffs for each subject
-# x + geom_point(aes(admittime, deathtime), alpha=0.3)
-
-# This takes too long but should be investigated. ~ 15,000 diagnosis codes?
-# need to find which 15 are most common and shop
-# x + geom_bar(aes(diagnosis)) + coord_flip()
-# 
-# unique(admins$diagnosis)
-# [1000] "CORONARY ARTERY DISEASE\\CORONARY ARTERY BYPASS GRAFT; ? OFF PUMP/SDA"                              
-# [ reached getOption("max.print") -- omitted 14692 entries ]
-```
 
 
 ```{r}

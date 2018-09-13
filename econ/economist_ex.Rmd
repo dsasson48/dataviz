@@ -188,7 +188,7 @@ library(grid) # for the 'unit' function
 
 ```{r}
 library(grid)
-png(file = "~/Desktop/my_plot.png", width = 800, height = 600)
+png(file = "~/Desktop/econ_plot.png", width = 800, height = 600)
 pc6 
 grid.text("Sources: Transparency International; UN Human Development Report", x = .02, y = .03, just = "left", draw = TRUE)
 grid.segments(x0 = 0.81, x1 = 0.825,
