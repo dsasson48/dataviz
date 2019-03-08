@@ -1,0 +1,145 @@
+---
+title: "Health Data Visualization Practice"
+output: 
+  html_document: 
+    fig_height: 8
+    fig_width: 10
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+setwd("~/Desktop/MIT/dataviz/") # change to your own directory
+```
+
+```{r}
+library(RPostgreSQL)
+library(ggplot2)
+library(tidyverse)
+library(ggthemes)
+library(ggcorrplot)
+library(purrr)
+
+# load the PostgreSQL driver
+drv <- dbDriver("PostgreSQL")
+
+# create a connection to the postgres database
+# set the search path to the mimiciii schema
+con <- dbConnect(drv, dbname = "mimic",
+                 host = "localhost", port = 5432,
+                 user = "DavidSasson")
+dbSendQuery(con, 'set search_path to mimiciii')
+
+# test connection
+# dbExistsTable(con, "patients")
+
+# show a list of tables
+dbListTables(con)
+```
+
+This snippet makes several assumptions with respect to the way the database is set up.
+
+- `dbname`: It assumes the name of your database is the same as your local username (i.e., the result of `whoami`). If this is not the case, you should pass a different value indicating the name of your database (e.g., `dbname='mimic'`).
+- `host`: It assumes the database is hosted locally on your machine (i.e., on `localhost`).
+- `port`: It assumes Postgres is listening on the default port, `5432`.
+- `user`: It assumes the current user has access to the database.
+- `password`: It assumes no password is required for this user, usually because Postgres is using `peer` authentication.
+
+********
+
+
+# Data Exploration with ggplot2
+
+```{r}
+admins = dbGetQuery(con, "select * from admissions")
+
+str(admins)
+```
+
+```{r}
+x <- ggplot(admins)
+
+x + geom_bar(aes(religion)) + coord_flip() + theme_minimal()
+```
+
+
+```{r}
+x + geom_bar(aes(insurance)) + facet_wrap(~ admission_type) + theme_fivethirtyeight()
+```
+
+```{r}
+x + geom_bar(aes(ethnicity)) + coord_flip() + theme_tufte()
+```
+
+```{r}
+x + geom_count(aes(x = insurance, y = ethnicity), alpha=0.3, col="red") + 
+  scale_size_area() +
+  theme_classic() 
+```
+
+```{r}
+demo.los <- as.numeric(admins$dischtime - admins$admittime)
+
+ggplot() + 
+  geom_histogram(aes(demo.los), alpha=0.6, fill=4, bins = 30) + 
+  ggtitle("Length of Stay in ICU") 
+```
+
+```{r}
+x + geom_bar(aes(discharge_location)) + coord_flip() + ggtitle("Discharge Location")
+```
+
+
+
+```{r}
+# keep only numeric columns 
+nums <- admins %>% keep(is.numeric)
+
+ggcorrplot(cor(nums))
+
+pairs(nums, pch =19, lower.panel=panel.smooth, cex = 0.1, upper.panel = NULL)
+
+```
+
+
+
+```{r}
+dbListTables(con)
+```
+
+
+
+```{r}
+stays = dbGetQuery(con, "select * from icustays")
+
+str(stays)
+```
+
+
+```{r}
+t <- ggplot(stays)
+
+# keep only numeric columns 
+nums <- stays %>% keep(is.numeric)
+
+ggcorrplot(cor(nums))
+
+# plot histogram of length of stay in the ICU
+t + geom_histogram(aes(los), binwidth = 1, fill=I("#9ebcda"), col=I("#FFFFFF")) + 
+  xlim(c(0,20)) + 
+  ggtitle("Length of stay in the ICU") + 
+  xlab("Length of stay, days")
+```
+
+
+
+
+
+##### Optional Break
+
+Anything you guys are intersted in exploring in MIMIC? If so, let's do it together! I promise you'll see me make mistakes every step of the way, but I think we have enough brainpower in this room to find something cool. 
+
+```{r}
+dbListTables(con)
+```
+
+
