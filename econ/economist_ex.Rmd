@@ -1,11 +1,15 @@
 ---
 title: "economist"
 author: "David Sasson"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, out.width = '70%', fig.align = "center")
+
 library(tidyverse)
 ```
 

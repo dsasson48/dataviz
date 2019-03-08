@@ -1,0 +1,297 @@
+---
+title: "ggplot2 tutorial"
+author: "David Sasson"
+output:
+  html_document:
+    fig_height: 8
+    fig_width: 10
+    
+---
+
+```{r, warning=FALSE, echo=FALSE,include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, out.width = '70%' ,fig.align = "center")
+# setwd("~/data/HST.953") # Students will need to set their own path
+```
+
+
+
+# Why ggplot2?
+
+Advantages of ggplot2
+
+* consistent underlying grammar of graphics 
+* plot specification at a high level of abstraction
+* very flexible
+* theme system for polishing plot appearance
+* mature and complete graphics system
+* many users, active mailing list
+
+
+That said, there are some things you cannot (or should not) do with ggplot2:
+
+* 3-dimensional graphics (see the rgl package)
+* Graph-theory type graphs (nodes/edges layout; see the igraph package)
+* Interactive graphics (see the ggvis package)
+
+
+# Cheat Sheet
+
+Before we dive into the specifics, it may be helpful to have the [ggplot2 cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) handy. 
+
+
+<img src="http://socviz.co/assets/ch-02-simple-knit-tall.png" width="250"/>
+
+# What Is The Grammar Of Graphics?
+
+The basic idea: independently specify plot building blocks and combine them to create just about any kind of graphical display you want. Building blocks of a graph include:
+
+* data
+* aesthetic mapping
+* geometric object
+* statistical transformations
+* scales
+* coordinate system
+* position adjustments
+* faceting
+
+
+
+<img src="http://socviz.co/assets/ch-03-ggplot-flow-vertical.png" width="250"/>
+
+
+
+```{r}
+# install.packages("tidyverse")
+library(tidyverse)
+```
+
+# Data
+
+As a simple example we'll be using the `iris` dataset in R, which contains information on sepal and petal length 50 flowers from each of 3 species of iris.
+
+```{r}
+head(iris)
+```
+
+The first step in creating a ggplot2 graph is to define a ggplot object. We do this with the function ggplot which initializes the graph. If we read the help file for this function, we see that the first argument is used to specify what data is associated with this object:
+
+```{r}
+ggplot(data = iris)
+```
+
+We can also pipe the data using the package dplyr. So this line of code is equivalent to the one above:
+
+```{r}
+iris %>% ggplot()
+```
+
+
+# Geometries
+
+In ggplot we create graphs by adding layers. Layers can define geometries, compute summary statistics, define what scales to use, or even change styles. To add layers, we use the the symbol `+`. 
+
+In general, a line of code will look like this:
+
+>> ggplot(DATA) + LAYER 1 + LAYER 2 + ... + LAYER n
+
+Usually, the first added layer defines the geometry. 
+
+Geometric objects are the actual marks we put on a plot. Examples include:
+
+* points (geom_point, for scatter plots, dot plots, etc)
+* lines (geom_line, for time series, trend lines, etc)
+* boxplot (geom_boxplot)
+
+Lets say we want to make a scatterplot.  Looking at the cheet sheet, we notice that the required geometry is `geom_point`. As a general rule, most function names will follow the pattern or geom and the name of the geometry connected by an underscore.
+
+These concepts will become clearer once we understand mappings. 
+
+
+# Aesthetic mappings
+
+In ggplot an aesthetic (shortened to aes) means “something you can see” and will be one of the functions you will most use. This statement conects the data with what we see on the graph, and is referred to the aesthetic mapping.  
+
+Each aes statment ususally includes some optional arguments such as:
+
+* position (i.e., on the x and y axes)
+* color (“outside” color)
+* fill (“inside” color)
+* shape (of points)
+* linetype
+* size
+
+Below is a basic scatterplot of sepal length versus width. 
+```{r}
+ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_point()
+```
+
+We can add also add some arguments to the geometry, like size or alpha: 
+```{r}
+ggplot(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) + geom_point(size = 3, alpha=0.4)
+```
+
+
+Or to color each class of species in the plot differently:
+```{r}
+ggplot(iris, aes(Sepal.Length, Sepal.Width, color = Species)) + geom_point()
+```
+
+In the above example, we mapped species to the color aesthetic, but we could have mapped species to the shape aesthetic in the same way. In this case, the shape of each point would reveal its species affiliation.
+
+```{r}
+ggplot(iris) + geom_point(aes(Sepal.Length, Sepal.Width, shape = Species))
+```
+
+
+
+
+
+# Putting it all together with examples
+
+
+## Histograms
+
+```{r}
+ggplot(faithful, aes(x = waiting)) + 
+  geom_histogram(binwidth = 8, color = "black")
+```
+
+```{r}
+ggplot(faithful, aes(x = waiting)) + 
+  geom_histogram(binwidth = 1, fill = "steelblue", color = "black") 
+```
+
+
+```{r}
+ggplot(data = mpg, aes(x = fl, fill = class)) + 
+  geom_bar()
+```
+
+
+## Line Plots
+
+```{r}
+ggplot(economics, aes(date, uempmed)) + geom_line()
+```
+
+## Bar Plots
+
+```{r}
+ggplot(iris, aes(Species, Sepal.Length)) + geom_bar(stat = "identity")
+```
+
+
+## Density Plots
+
+```{r}
+ggplot(faithful, aes(waiting)) + geom_density()
+```
+
+```{r}
+ggplot(faithful, aes(waiting)) + geom_density(fill = "blue", alpha = .1)
+```
+
+
+# Smoothers
+
+`geom_smooth` allows you to view a smoothed mean of data. Each method can be used in different settings (linear regression, generalized linear models, GAMs, loess, etc. )
+
+
+```{r}
+ggplot(iris, aes(Sepal.Length, Sepal.Width, color = Species)) + 
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+# Statistics
+
+Statistical transformations and data summary. All geoms have associated default stats, and vice versa(e.g. binning for a histogram or fitting a linear model). 
+
+```{r}
+library(MASS)
+ggplot(birthwt, aes(factor(race), bwt)) + geom_boxplot()
+```
+
+
+
+# Facets
+ggplot has a special technique called faceting that allows the user to split one plot into multiple plots based on a factor included in the dataset. 
+
+Subsetting data to make lattice plots can be really powerful!
+
+```{r}
+# single column, multiple rows
+ggplot(iris, aes(Sepal.Length, Sepal.Width)) +
+  geom_point() +
+  facet_grid(Species ~ .)
+```
+
+```{r}
+# single row, multiple columns
+ggplot(iris, aes(Sepal.Length, Sepal.Width)) +
+  geom_point() +
+  facet_grid(. ~ Species)
+```
+
+
+Using the mpg database in R, we can make a plot a plot of the highway miles (hwy) a car gets by its engine size (displ) for each car manufacturer:
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+    geom_point() +
+    facet_wrap(~ manufacturer)
+```
+We can now make the faceted plot by splitting further by class using color (within a single plot):
+```{r}
+ggplot(data = mpg, aes(x = displ, y = hwy, color = class)) +
+     geom_point() +
+     facet_wrap(~ manufacturer)
+```
+
+
+
+
+## Themes
+
+Themes are a great way to define custom plots. ggplot is highly customizable!
+
+```{r}
+# install.packages(ggthemes)
+library(ggthemes)
+
+# Then add one of many themes to your plot
+# theme_stata(), theme_excel(), theme_wsj(), theme_solarized()
+# see ?ggthemes for more info
+
+ggplot(iris, aes(Sepal.Length, Sepal.Width, color = Species)) +
+  geom_point(size = 1.2, shape = 16) +
+  facet_wrap( ~ Species) +
+  theme_economist()
+```
+
+```{r}
+ggplot(iris, aes(Sepal.Length, Sepal.Width, color = Species)) +
+  geom_point(size = 1.2, shape = 16) +
+  facet_wrap( ~ Species) +
+  theme_bw()
+```
+
+
+
+```{r}
+ggplot(data = mpg, aes(x = displ, y = hwy)) + 
+  geom_point(aes(color = class)) + 
+  geom_smooth() +
+  labs(title = "Relationship between engine size and miles per gallon (mpg)",
+         x = "Highway MPG",
+         y = "Engine displacement (liters)") +
+  theme_bw()
+```
+
+
+
+
+
+
+
+

@@ -1,0 +1,208 @@
+---
+title: "Gapminder_soln"
+author: "David Sasson"
+date: "3/6/2019"
+output: html_document
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, out.width = '70%', fig.align = "center")
+library(tidyverse)
+library(dslabs)
+library(gapminder)
+```
+
+# Solutions
+
+### Part I
+
+#### 1
+
+Make a basic scatterplot of GDP per capita and life expectancy
+
+```{r}
+ggplot(gapminder, aes(x = gdpPercap, y = lifeExp)) + geom_point()  
+```
+
+
+#### 2
+
+Change the graph from a scatterplot to a line using a smoother 
+
+```{r}
+ggplot(data = gapminder, mapping = aes(x = gdpPercap, y=lifeExp)) + geom_smooth()
+```
+
+
+#### 3
+
+Now change the x axis to a log scale
+
+```{r}
+ggplot(gapminder, aes(x=gdpPercap, y=lifeExp)) + 
+  geom_point() + 
+  scale_x_log10()
+
+```
+
+
+
+#### 4
+
+Using only data from 1950, plot GDP per capita and life expectancy in a scatterplot. Color points according to continent and scale the x axis with a log 10 transform. 
+
+```{r}
+ggplot(filter(gapminder, year==1957), aes(x=gdpPercap, y=lifeExp)) +
+    geom_point() + 
+    scale_x_log10() +
+    aes(color = continent)
+```
+
+
+
+Challenge:
+
+Try out the size and shape aesthetics in a scatterplot of lifeExp vs gdpPercap.
+
+Make the points’ size correspond to the population.
+
+```{r}
+ggplot(filter(gapminder, year==1957), aes(x=gdpPercap, y=lifeExp)) +
+    geom_point() + 
+    scale_x_log10() +
+    aes(color = continent, size=pop)
+```
+
+
+Make the points’ shape correspond to the continent
+
+```{r}
+ggplot(filter(gapminder, year==1957), aes(x=gdpPercap, y=lifeExp)) +
+    geom_point() + 
+    scale_x_log10() +
+    aes(shape = continent)
+```
+
+
+What happens if you use aes(color=pop)?
+
+```{r}
+ggplot(filter(gapminder, year==1957), aes(x=gdpPercap, y=lifeExp)) +
+    geom_point() + 
+    scale_x_log10() +
+    aes(color = pop)
+```
+
+
+
+
+
+#### 5
+
+Create a histogram of life expectancy for 2007
+
+```{r}
+gm_2007 <- filter(gapminder, year==2007)
+
+ggplot(gm_2007, aes(x=lifeExp)) + geom_histogram(binwidth=2)
+```
+
+
+
+
+#### 6
+
+compare the distributions for the different continents using density estimates
+
+```{r}
+ggplot(gm_2007, aes(x=lifeExp)) + geom_density(alpha=0.5) + aes(fill=continent)
+
+```
+
+
+
+
+#### 7
+
+Express the same information in a boxplot
+
+```{r}
+ggplot(gm_2007, aes(y=lifeExp, x=continent)) + geom_boxplot()
+```
+
+
+#### 8
+
+Using only data from 2007, plot GDP per capita and life expectancy for each continent using faceting. Scale the x axes by log10
+
+
+```{r}
+p <- ggplot(filter(gapminder, year==2007), aes(x=gdpPercap, y=lifeExp)) + 
+  geom_point() + 
+  scale_x_log10()
+
+p + facet_grid(~ continent)
+```
+
+How could you facet horizontally?
+
+```{r}
+p + facet_grid(continent ~ .)
+```
+
+
+Try using `facet_wrap`
+
+```{r}
+p + facet_wrap(~ continent)
+```
+
+Now `facet_wrap` by year, coloring each continent differently
+
+```{r}
+p <- ggplot(gapminder, aes(x=gdpPercap, y=lifeExp)) + 
+  geom_point() + 
+  scale_x_log10()
+
+p + aes(color=continent) + facet_wrap(~ year)
+```
+
+
+Facet by both year and country
+
+```{r}
+p + facet_grid(continent ~ year)
+```
+
+
+
+### Part II
+
+
+1. How would you plot the relationship between `cty`, the average city mileage,  and `hwy`, the averabe highway mileage? How would you describe this relationship? 
+
+```{r}
+ggplot(mpg, aes(cty, hwy)) + 
+  geom_point()
+```
+The point here to make is that this very linear relationship is of course caused by another factor, motor size. That is to say, the description "the higher/lower cty, the higher/lower hwy" is to taken as strictly descriptive.
+
+#### Exercise 2
+
+```{r}
+ggplot(mpg, aes(cty, hwy)) + geom_point()
+```
+
+```{r}
+ggplot(diamonds, aes(carat, price)) + geom_point()
+```
+
+```{r}
+ggplot(economics, aes(date, unemploy)) + geom_line()
+```
+
+```{r}
+ggplot(mpg, aes(cty)) + geom_histogram()
+```
+
+
