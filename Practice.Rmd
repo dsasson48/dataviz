@@ -1,0 +1,115 @@
+---
+title: "Gapminder Practice"
+author: "David Sasson"
+date: "6/5/2019"
+output: html_document
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, out.width = '70%', fig.align = "center")
+library(tidyverse)
+library(dslabs)
+library(gapminder)
+```
+
+
+# Exercises
+
+#### Part II
+
+1. Using the `mtcars` dataset, how would you plot the relationship between `cty`, the average city mileage, and `hwy`, the average highway mileage? How would you describe this relationship?
+
+2. Describe the data, aesthetic mappings, and and layers used for each of the following plots. Sometimes you will have to guess, but common sense should help. Try to imagine what the graph will look like before running the command.    
+     * ggplot(mpg, aes(cty, hwy)) + geom_point()
+     * ggplot(diamonds, aes(carat, price)) + geom_point()
+     * ggplot(economics, aes(date, unemploy)) + geom_line()
+     * ggplot(mpg, aes(cty)) + geom_histogram()
+
+3. What happens if you make a scatter plot of class vs drv? Why is the plot not useful? What geometry object could you change to make it more meaningful?
+
+4. What’s gone wrong with this code? Why are the points not blue?
+
+
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, colour = "blue"))
+```
+
+
+5. What happens if you map an aesthetic to something other than a variable name, like `aes(color = displ < 5)`
+
+6. What happens if you facet on a continuous variable?
+
+```{r}
+ggplot(mpg, aes(x = displ, y = hwy)) +
+  geom_point() +
+  facet_grid(. ~ cty)
+```
+
+### Part I
+
+#### 1
+
+Make a basic scatterplot of GDP per capita and life expectancy
+
+
+#### 2
+
+Change the graph from a scatterplot to a line using a smoother 
+
+
+
+#### 3
+
+Now change the x axis to a log scale
+
+
+
+#### 4
+
+Using only data from 1950, plot GDP per capita and life expectancy in a scatterplot. Color points according to continent and scale the x axis with a log 10 transform. 
+
+Challenge:
+
+Try out the size and shape aesthetics in a scatterplot of lifeExp vs gdpPercap.
+
+* Make the points’ size correspond to the population.
+
+* Make the points’ shape correspond to the continent
+
+* What happens if you use aes(color=pop)?
+
+
+
+#### 5
+
+Create a histogram of life expectancy for 2007
+
+
+#### 6
+
+Compare the distributions for the different continents using density estimates
+
+
+#### 7
+
+Express the same information in a boxplot
+
+
+
+#### 8
+
+Using only data from 2007, plot GDP per capita and life expectancy for each continent using faceting. Scale the x axes by log10
+
+* How could you facet horizontally?
+* Try using `facet_wrap` for each continent
+* Now `facet_wrap` by year, coloring each continent differently
+* How could you facet by year and country?
+
+
+
+
+Do your own exploratory data analysis with the `diamonds` ,`iris`, or `mtcars` datasets. Think about what type of plot you want to create before you start coding.
+
+
+
